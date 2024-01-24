@@ -76,3 +76,7 @@ print("\nEchelon Form of A:")
 print(echelon_form_A)
 print("\nU matrix in the LU(A):")
 print(U)
+
+
+# example over finite field Z/pZ:
+# A = matrix.random(GF(3), 4, 4)

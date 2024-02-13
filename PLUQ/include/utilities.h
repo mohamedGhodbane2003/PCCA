@@ -13,5 +13,6 @@ bool checkTriL(Matrix* L);
 int min(int a, int b);
 bool checkTriU(Matrix* U, int rank);
 void checkManyPLUQ(int p, int max_iter);
+void checkOnePLUQ(int p, int m, int n, bool print);
 
 #endif

@@ -8,12 +8,16 @@ BINDIR=bin
 SRCS=$(wildcard $(SRCDIR)/*.c)
 OBJS=$(SRCS:$(SRCDIR)/%.c=$(BINDIR)/%.o)
 
-EXECUTABLE=$(BINDIR)/test
+EXECUTABLE_TEST=$(BINDIR)/test
+EXECUTABLE_BENCH=$(BINDIR)/bench
 
-all: $(EXECUTABLE)
+all: $(EXECUTABLE_TEST) $(EXECUTABLE_BENCH)
 
-$(EXECUTABLE): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+$(EXECUTABLE_TEST): $(OBJS)
+	$(CC) $(CFLAGS) $(filter-out bin/main_bench.o, $^) -o $@
+
+$(EXECUTABLE_BENCH): $(OBJS)
+	$(CC) $(CFLAGS) $(filter-out bin/main.o, $^) -o $@
 
 $(BINDIR)/%.o: $(SRCDIR)/%.c | $(BINDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -25,4 +29,3 @@ clean:
 	rm -rf $(BINDIR)
 
 .PHONY: all clean
-

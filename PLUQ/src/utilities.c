@@ -210,3 +210,62 @@ void checkManyPLUQ(int p, int max_iter){
     }
 
 }
+
+/*
+ * Function: checkOnePLUQ
+ * ------------------------
+ * Checks the correctness of PLUQ decomposition for one matrix.
+ * 
+ * Parameters:
+ *   - p: Prime number used in the finite field.
+ *   - m: number of rows
+ *   - n: number of columns.
+ *   - print: flag to print the matrices
+ * 
+ * Details:
+ *   - Generates random matrix (m, n)
+ *   - Computes the PLUQ decomposition and checks if the decomposition
+ *     is correct by reconstructing the original matrix.
+ *   - Print the result
+ */
+
+void checkOnePLUQ(int p, int m, int n, bool print){
+    
+    bool correct = true;
+    Matrix* A = randomMatrix(m, n, p);
+    int* P = NULL;
+    int* Q = NULL;
+    Matrix* LU = NULL;
+    Matrix* L = NULL;
+    Matrix* U = NULL;
+    int rank = 0;
+    PLUQ(A, &P, &LU, &Q, &rank, p);
+    expand_PLUQ(LU, rank, &L, &U);
+
+    if(print){
+        printf("A:\n");
+        printMatrix(A);
+        printf("P:\n");
+        printArray(P, m);
+        printf("L:\n");
+        printMatrix(L);
+        printf("U:\n");
+        printMatrix(U);
+        printf("Q:\n");
+        printArray(Q, n);
+        printf("\n");
+    }
+
+    correct = checkTriL(L) && checkTriU(U,rank);
+    permuteMatrixRows(L, P);
+    permuteMatrixCols(U, Q);
+    Matrix* L_mult_U = multiplyMatrices(L, U, p);
+    correct = correct && compareMatrices(L_mult_U, A);
+
+    if (correct)
+        printf("Matrix (%d, %d): ok\n", m, n);
+    else{
+        printf("Matrix (%d, %d): wrong\n");
+    }
+
+}

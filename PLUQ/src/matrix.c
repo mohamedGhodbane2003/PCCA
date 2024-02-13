@@ -239,9 +239,9 @@ Matrix* multiplyMatrices(Matrix* A, Matrix* B, int prime) {
 
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < p; j++) {
-            int sum = 0;
+            long long sum = 0;
             for (int k = 0; k < n; k++) {
-                sum += A->data[i][k] * B->data[k][j];
+                sum += (long long) A->data[i][k] * B->data[k][j]; // 
             }
             result->data[i][j] = sum % prime;
         }

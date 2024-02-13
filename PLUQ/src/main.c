@@ -20,20 +20,42 @@
  *  This could be done by two different executables from two files main_test.c and main_bench.c, managed by the Makefile (make test || make bench)
  */
 
-int main() {
+/*
+ * Note: Overflow issue was in multiplyMatrices function in file matrix.c has been resolved
+ *       by casting intermediate results to 'long long'
+ */
+
+int main(int argc, char *argv[]) {
     // list of primes, primes[k] has bitlength k+2
     int primes[29] = {3, 7, 13, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 393241, 786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611, 402653189, 805306457};
 
-    // test for each prime
-    for (long k = 0; k < 29; k++)
-    {
-        printf("prime %d, %ld bits\n", primes[k], k+2);
+    // Check if a bit length, m and n are provided as command-line argument
+    if (argc == 4) {
+
+        int bitlength = atoi(argv[1]);
+        int m = atoi(argv[2]);
+        int n = atoi(argv[3]);
+        
+        if (bitlength < 2 || bitlength > 30) {
+            printf("Invalid bitlength. Bitlength must be between 2 and 30.\n");
+            return 1;
+        }
+        int p = primes[bitlength - 2];
+        printf("Prime %d, %d bits\n", p, bitlength);
+        checkOnePLUQ(p, m, n, false);
+        printf("\n");
+        return 0;
+    }
+
+    // If no bit length is provided, test for all primes in the list
+    for (long k = 0; k < 29; k++) {
+        printf("Prime %d, %ld bits\n", primes[k], k + 2);
         checkManyPLUQ(primes[k], 1000);
+        printf("\n");
     }
 
     return 0;
 }
-
 /** computation of primes of different lengths
 sage: for nbits in range(4,31):
 ....:     n = 2**(nbits-1) + 2**(nbits-2)

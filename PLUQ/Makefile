@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Iinclude
+CFLAGS=-Iinclude -O3
 
 SRCDIR=src
 INCDIR=include

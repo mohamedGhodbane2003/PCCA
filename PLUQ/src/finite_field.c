@@ -1,7 +1,5 @@
 #include "finite_field.h"
 
-
-
 /*
  * Function: add
  * --------------

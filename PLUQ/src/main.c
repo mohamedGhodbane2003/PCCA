@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
         }
         int p = primes[bitlength - 2];
         printf("Prime %d, %d bits\n", p, bitlength);
-        checkOnePLUQ(p, m, n, false);
+        checkOnePLUQ(p, m, n, true);
         printf("\n");
         return 0;
     }

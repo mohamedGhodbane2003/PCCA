@@ -7,8 +7,28 @@ int main(int argc, char *argv[]) {
     int primes[29] = {3, 7, 13, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 393241, 786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611, 402653189, 805306457};
 
     if (argc != 4) {
-        printf("Usage: %s <bitlength> <rows> <cols>\n", argv[0]);
-        return 1;
+        for (long k = 0; k < 29; k++) {
+            double tt = 0.0;
+            long nb_iter = 0;
+            while (tt < 1.) {
+                Matrix A = randomMatrix(100, 100, primes[k]);
+                Matrix LU;
+                int* P = NULL;
+                int* Q = NULL;
+                int rank = 0;
+                clock_t start = clock();
+                PLUQ(A, &P, &LU, &Q, &rank, primes[k]);
+                clock_t end = clock();
+                tt += ((double)(end - start)) / CLOCKS_PER_SEC;
+                
+                nb_iter += 1;
+            }
+
+            tt = tt / nb_iter;
+            printf("Prime %d, %ld bits\n", primes[k], k + 2);
+            printf("Time taken to compute PLUQ: %f seconds\n", tt);
+        }
+        return 0;
     }
 
     int m = atoi(argv[2]);
@@ -29,11 +49,11 @@ int main(int argc, char *argv[]) {
     while (tt < 1.)
     {
         // Create a matrix of specified dimensions
-        Matrix *A = randomMatrix(m, n, p);
+        Matrix A = randomMatrix(m, n, p);
 
         int* P = NULL;
         int* Q = NULL;
-        Matrix* LU = NULL;
+        Matrix LU;
         int rank = 0;
 
         // Benchmark PLUQ computation
@@ -43,7 +63,7 @@ int main(int argc, char *argv[]) {
         tt += ((double)(end - start)) / CLOCKS_PER_SEC;
 
         // Cleanup
-        destroyMatrix(A);
+        free(A.data);
 
         nb_iter += 1;
     }

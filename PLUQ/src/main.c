@@ -3,9 +3,6 @@
 
 /** TODO: 
  *
- *  \todo this does not seem to work for primes of 16 bits or more
- *  (overflow issue in mult or inverse in finitefield.c ?)
- *
  *  \todo for TEST:
  *  via argv / argc, propose the choice of a bitlength to the user for the prime number
  *     --> if choice given, take prime of that length in the list, and check
@@ -18,11 +15,6 @@
  *  ./bin/bench 5 10 20     --> launches benchmark on 10 x 20 matrix, with prime of bitlength 5
  *
  *  This could be done by two different executables from two files main_test.c and main_bench.c, managed by the Makefile (make test || make bench)
- */
-
-/*
- * Note: Overflow issue was in multiplyMatrices function in file matrix.c has been resolved
- *       by casting intermediate results to 'long long'
  */
 
 int main(int argc, char *argv[]) {

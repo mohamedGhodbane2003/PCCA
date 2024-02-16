@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     int primes[29] = {3, 7, 13, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 393241, 786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611, 402653189, 805306457};
 
     if (argc != 4) {
-        printf("Usage: %s <rows> <cols> <bitlength>\n", argv[0]);
+        printf("Usage: %s <bitlength> <rows> <cols>\n", argv[0]);
         return 1;
     }
 

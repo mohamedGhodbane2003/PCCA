@@ -23,24 +23,33 @@ int main(int argc, char *argv[]) {
 
     int p = primes[bitlength-2];
 
-    // Create a matrix of specified dimensions
-    Matrix *A = randomMatrix(m, n, p);
+    // repeat computation several times if it is < 1 second
+    double tt = 0.0;
+    long nb_iter = 0;
+    while (tt < 1.)
+    {
+        // Create a matrix of specified dimensions
+        Matrix *A = randomMatrix(m, n, p);
 
-    int* P = NULL;
-    int* Q = NULL;
-    Matrix* LU = NULL;
-    int rank = 0;
-    
-    // Benchmark PLUQ computation
-    clock_t start = clock();
-    PLUQ(A, &P, &LU, &Q, &rank, p);
-    clock_t end = clock();
+        int* P = NULL;
+        int* Q = NULL;
+        Matrix* LU = NULL;
+        int rank = 0;
 
-    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("Time taken to compute PLUQ: %f seconds\n", time_taken);
+        // Benchmark PLUQ computation
+        clock_t start = clock();
+        PLUQ(A, &P, &LU, &Q, &rank, p);
+        clock_t end = clock();
+        tt += ((double)(end - start)) / CLOCKS_PER_SEC;
 
-    // Cleanup
-    destroyMatrix(A);
+        // Cleanup
+        destroyMatrix(A);
+
+        nb_iter += 1;
+    }
+
+    tt = tt / nb_iter;
+    printf("Time taken to compute PLUQ: %f seconds\n", tt);
 
     return 0;
 }

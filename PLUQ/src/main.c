@@ -3,18 +3,30 @@
 
 /** TODO: 
  *
- *  \todo for TEST:
- *  via argv / argc, propose the choice of a bitlength to the user for the prime number
- *     --> if choice given, take prime of that length in the list, and check
- *     --> if no choice given, check all bitlengths like is already done now
- *  ./bin/test 5 10 20     --> launches test on 10 x 20 matrix, with prime of bitlength 5
- *  ./bin/test             --> launches test on small matrices and many primes (like already done now)
+ * Matrices:
  *
- *  \todo add benchmarks:
- *  the user gives number of rows, number of columns, and this prints the time for computing PLUQ
- *  ./bin/bench 5 10 20     --> launches benchmark on 10 x 20 matrix, with prime of bitlength 5
+ * - no need for pointers to Matrix and malloc-ing Matrix, one should use
+ *   Matrix structs directly for more efficiency (a Matrix is only two int's and a pointer)
  *
- *  This could be done by two different executables from two files main_test.c and main_bench.c, managed by the Makefile (make test || make bench)
+ * - we will target matrices of small dimensions (up to 100 or 200 rows/columns),
+ *   in this case we will have better efficiency with a single contiguous storage space for all coefficients
+ *   -> one malloc of an array of m*n entries
+ *   -> entry (i,j) is stored at i*n + j in the array
+ *
+ *
+ *
+ *
+ * Starting work on AVX2: use basic AVX intrinsics to write
+ * . a function which takes two vectors v and w of the same length, filled with int32,
+ * and a prime p, and computes the scalar product sum(v[i] w[i], i=0...len-1)
+ * . a function which takes an int32 c, a vector v filled with int32, a prime p,
+ * and computes the vector [c*v[0]  c*v[1]  ...  c*v[len-1]]
+ *
+ * Use all intrinsics you want from SSE and AVX:
+ * https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#techs=SSE_ALL,AVX_ALL
+ * (but not avx512 for the moment; or make one version with it and one version without it)
+ *
+ * Then compare the speed between the avx version and the usual version of the same function
  */
 
 int main(int argc, char *argv[]) {

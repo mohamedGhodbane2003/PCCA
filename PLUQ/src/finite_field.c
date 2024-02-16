@@ -16,7 +16,7 @@
  *   The result of the addition operation modulo p.
  */
 
-int add(int a, int b, int p) {
+inline int add(int a, int b, int p) {
     int r = a + b;
     // Reduce the result modulo p
     return r >= p ?  r - p : r;
@@ -36,7 +36,7 @@ int add(int a, int b, int p) {
  *   The result of the subtraction operation modulo p.
  */
 
-int sub(int a, int b, int p) {
+inline int sub(int a, int b, int p) {
     int r = a - b;
     // Reduce the result modulo p
     return r < 0 ?  r + p : r;
@@ -56,7 +56,7 @@ int sub(int a, int b, int p) {
  *   The result of the multiplication operation modulo p.
  */
 
-int mult(int a, int b, int p) {
+inline int mult(int a, int b, int p) {
     // Use 64-bit integer type to avoid overflow
     long long r = (long long)a * b;
     // Reduce the result modulo p

@@ -14,6 +14,14 @@
  *   -> entry (i,j) is stored at i*n + j in the array
  *
  *
+ * PLUQ:
+ * - can we slightly modify the inverse in order to do fewer calls to "inverse"?
+ *   (while still computing the exact same inverses)
+ *
+ * - in some cases we do not need to keep the input matrix, so it would be
+ *   btter to have two functions: the PLUQ main function could do a copy and
+ *   call another function "pluq_inplace" that works in place on the matrix
+ *   (meaning it changes A directly, not doing a copy)
  *
  *
  * Starting work on AVX2: use basic AVX intrinsics to write

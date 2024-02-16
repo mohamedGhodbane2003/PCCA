@@ -50,7 +50,7 @@ void printArray(int* array, int size){
  *   - L: Pointer to the matrix to be checked.
  * 
  * Returns:
- *   True if the matrix is lower triangular, otherwise false.
+ *   True if the matrix is square & lower triangular & with 1 on diagonal, otherwise false.
  */
 
 bool checkTriL(Matrix* L) {
@@ -78,7 +78,7 @@ bool checkTriL(Matrix* L) {
  * Returns the minimum of two integers.
  */
 
-int min(int a, int b){
+inline int min(int a, int b){
     return a < b ? a : b;
 }
 
@@ -131,84 +131,42 @@ bool checkTriU(Matrix* U, int rank) {
  */
 
 void checkManyPLUQ(int p, int max_iter){
-    int i = 0;
-    bool correct = true;
-    while (correct && i < max_iter){
-        Matrix* A = randomMatrix(6, 3, p);
-        int* P = NULL;
-        int* Q = NULL;
-        Matrix* LU = NULL;
-        Matrix* L = NULL;
-        Matrix* U = NULL;
-        int rank = 0;
-        PLUQ(A, &P, &LU, &Q, &rank, p);
-        expand_PLUQ(LU, rank, &L, &U);
-        correct = checkTriL(L) && checkTriU(U,rank);
-        permuteMatrixRows(L, P);
-        permuteMatrixCols(U, Q);
-        Matrix* L_mult_U = multiplyMatrices(L, U, p);
-        correct = correct && compareMatrices(L_mult_U, A);
-        i += 1;
-    }
+    for (long test_case = 0; test_case < 3; test_case++)
+    {
+        int i = 0;
+        bool correct = true;
+        while (correct && i < max_iter){
+            Matrix* A = NULL;
+            if (test_case == 0)
+                A = randomMatrix(6, 3, p);
+            else if (test_case == 1)
+                A = randomMatrix(3, 6, p);
+            else if (test_case == 2)
+                A = randomMatrix(4, 4, p);
 
-    if (correct)
-        printf("tall rectangular: ok\n");
-    else{
-        printf("tall rectangular: wrong\n");
-    }
+            int* P = NULL;
+            int* Q = NULL;
+            Matrix* LU = NULL;
+            Matrix* L = NULL;
+            Matrix* U = NULL;
+            int rank = 0;
+            PLUQ(A, &P, &LU, &Q, &rank, p);
+            expand_PLUQ(LU, rank, &L, &U);
+            correct = checkTriL(L) && checkTriU(U,rank);
+            permuteMatrixRows(L, P);
+            permuteMatrixCols(U, Q);
+            Matrix* L_mult_U = multiplyMatrices(L, U, p);
+            correct = correct && compareMatrices(L_mult_U, A);
+            i += 1;
 
-    i = 0;
-    correct = true;
-    while (correct && i < max_iter){
-        Matrix* A = randomMatrix(3, 6, p);
-        int* P = NULL;
-        int* Q = NULL;
-        Matrix* LU = NULL;
-        Matrix* L = NULL;
-        Matrix* U = NULL;
-        int rank = 0;
-        PLUQ(A, &P, &LU, &Q, &rank, p);
-        expand_PLUQ(LU, rank, &L, &U);
-        correct = checkTriL(L) && checkTriU(U,rank);
-        permuteMatrixRows(L, P);
-        permuteMatrixCols(U, Q);
-        Matrix* L_mult_U = multiplyMatrices(L, U, p);
-        correct = correct && compareMatrices(L_mult_U, A);
-        i += 1;
+            if (!correct)
+            {
+                printf("test_case %ld: wrong\n", test_case);
+                return;
+            }
+        }
     }
-
-    if (correct)
-        printf("wide rectangular: ok\n");
-    else{
-        printf("wide rectangular: wrong\n");
-    }
-
-    i = 0;
-    correct = true;
-    while (correct && i < max_iter){
-        Matrix* A = randomMatrix(4, 4, p);
-        int* P = NULL;
-        int* Q = NULL;
-        Matrix* LU = NULL;
-        Matrix* L = NULL;
-        Matrix* U = NULL;
-        int rank = 0;
-        PLUQ(A, &P, &LU, &Q, &rank, p);
-        expand_PLUQ(LU, rank, &L, &U);
-        correct = checkTriL(L) && checkTriU(U,rank);
-        permuteMatrixRows(L, P);
-        permuteMatrixCols(U, Q);
-        Matrix* L_mult_U = multiplyMatrices(L, U, p);
-        correct = correct && compareMatrices(L_mult_U, A);
-        i += 1;
-    }
-
-    if (correct)
-        printf("square: ok\n");
-    else{
-        printf("square: wrong\n");
-    }
-
+    printf("---all tests passed---\n");
 }
 
 /*
@@ -265,7 +223,7 @@ void checkOnePLUQ(int p, int m, int n, bool print){
     if (correct)
         printf("Matrix (%d, %d): ok\n", m, n);
     else{
-        printf("Matrix (%d, %d): wrong\n");
+        printf("Matrix (%d, %d): wrong\n", m, n);
     }
 
 }

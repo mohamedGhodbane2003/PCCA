@@ -12,12 +12,11 @@ int main(int argc, char *argv[]) {
             long nb_iter = 0;
             while (tt < 1.) {
                 Matrix A = randomMatrix(100, 100, primes[k]);
-                Matrix LU;
                 int* P = NULL;
                 int* Q = NULL;
                 int rank = 0;
                 clock_t start = clock();
-                PLUQ(A, &P, &LU, &Q, &rank, primes[k]);
+                pluq_inplace(&A, &P, &Q, &rank, primes[k]);
                 clock_t end = clock();
                 tt += ((double)(end - start)) / CLOCKS_PER_SEC;
                 

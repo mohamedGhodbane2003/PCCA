@@ -1,40 +1,41 @@
 #include "PLUQ.h"
 
-void PLUQ(Matrix A, int** P, Matrix* LU, int** Q, int* rank, int p){
-    int m = A.rows;
-    int n = A.cols;
-    *LU = createMatrix(m, n);
-    // Initialize LU with copy of A
-    copyMatrix(A, LU);
+void pluq_inplace(Matrix* A, int** P, int** Q, int* rank, int p) {
+    int m = A->rows;
+    int n = A->cols;
 
-    // Initialize permutations with identity permutation
-    *Q = createRange(n);
     *P = createRange(m);
+    *Q = createRange(n);
 
-    // Currently discovered rank and dimension of left nullspace
     int matrixRank = 0;
     int nullity = 0;
 
-    while (matrixRank + nullity < m){
+    while (matrixRank + nullity < m) {
         int pivot = matrixRank; // pivot is at column index >= matrixRank; take first one
-        while (pivot < n && LU->data[matrixRank*n+pivot] == 0)
+        while (pivot < n && A->data[matrixRank * n + pivot] == 0)
             pivot += 1;
-        if (pivot == n){
-            rowRotation(LU,matrixRank,*P);
+        if (pivot == n) {
+            rowRotation(A, matrixRank, *P);
             nullity++;
-         }else{
-            int inv = inverse(LU->data[matrixRank*n+matrixRank], p);
-            if(pivot != matrixRank)
-                colTransposition(LU,matrixRank,pivot,*Q);
-            for (int k = matrixRank+1; k < m ; k++){
-                LU->data[k*n+matrixRank] = mult(LU->data[k*n+matrixRank], inv, p);
-                for(int j = matrixRank+1; j < n; j++)
-                    LU->data[k*n+j] = sub(LU->data[k*n+j], mult(LU->data[k*n+matrixRank], LU->data[matrixRank*n+j], p), p);
+        } else {
+            int inv = inverse(A->data[matrixRank * n + matrixRank], p);
+            if (pivot != matrixRank)
+                colTransposition(A, matrixRank, pivot, *Q);
+            for (int k = matrixRank + 1; k < m; k++) {
+                A->data[k * n + matrixRank] = mult(A->data[k * n + matrixRank], inv, p);
+                for (int j = matrixRank + 1; j < n; j++)
+                    A->data[k * n + j] = sub(A->data[k * n + j], mult(A->data[k * n + matrixRank], A->data[matrixRank * n + j], p), p);
             }
             matrixRank++;
-         }
+        }
     }
     *rank = matrixRank;
+}
+
+void PLUQ(Matrix A, int** P, Matrix* LU, int** Q, int* rank, int p) {
+    *LU = createMatrix(A.rows, A.cols);
+    copyMatrix(A, LU);
+    pluq_inplace(LU, P, Q, rank, p);
 }
 
 void expand_PLUQ(Matrix LU, int rank, Matrix* L, Matrix* U) {

@@ -1,5 +1,36 @@
 #include "PLUQ.h"
 
+void pluq_inplace_avx2(Matrix* A, int** P, int** Q, int* rank, int p) {
+    int m = A->rows;
+    int n = A->cols;
+
+    *P = createRange(m);
+    *Q = createRange(n);
+
+    int matrixRank = 0;
+    int nullity = 0;
+
+    while (matrixRank + nullity < m) {
+        int pivot = matrixRank; // pivot is at column index >= matrixRank; take first one
+        while (pivot < n && A->data[matrixRank * n + pivot] == 0)
+            pivot += 1;
+        if (pivot == n) {
+            rowRotation(A, matrixRank, *P);
+            nullity++;
+        } else {
+            int inv = inverse(A->data[matrixRank * n + matrixRank], p);
+            if (pivot != matrixRank)
+                colTransposition(A, matrixRank, pivot, *Q);
+            for (int k = matrixRank + 1; k < m; k++) {
+                A->data[k * n + matrixRank] = mult(A->data[k * n + matrixRank], inv, p);
+                rows_elimination_avx2(A->data, n, matrixRank,A->data[k * n + matrixRank] ,p ,k);
+            }
+            matrixRank++;
+        }
+    }
+    *rank = matrixRank;
+}
+
 void pluq_inplace(Matrix* A, int** P, int** Q, int* rank, int p) {
     int m = A->rows;
     int n = A->cols;
@@ -35,7 +66,7 @@ void pluq_inplace(Matrix* A, int** P, int** Q, int* rank, int p) {
 void PLUQ(Matrix A, int** P, Matrix* LU, int** Q, int* rank, int p) {
     *LU = createMatrix(A.rows, A.cols);
     copyMatrix(A, LU);
-    pluq_inplace(LU, P, Q, rank, p);
+    pluq_inplace_avx2(LU, P, Q, rank, p);
 }
 
 void expand_PLUQ(Matrix LU, int rank, Matrix* L, Matrix* U) {

@@ -7,11 +7,12 @@ int main(int argc, char *argv[]) {
     int primes[29] = {3, 7, 13, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 393241, 786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611, 402653189, 805306457};
 
     if (argc != 4) {
+        printf("BITS\t\t\tORIGINAL PLUQ\t\t\tVECTORIZED PLUQ\t\t\tSPEEDUP\n\n");
         for (long k = 0; k < 29; k++) {
             double tt = 0.0;
             long nb_iter = 0;
             while (tt < 1.) {
-                Matrix A = randomMatrix(100, 100, primes[k]);
+                Matrix A = randomMatrix(200, 200, primes[k]);
                 int* P = NULL;
                 int* Q = NULL;
                 int rank = 0;
@@ -24,8 +25,25 @@ int main(int argc, char *argv[]) {
             }
 
             tt = tt / nb_iter;
-            printf("Prime %d, %ld bits\n", primes[k], k + 2);
-            printf("Time taken to compute PLUQ: %f seconds\n", tt);
+            printf("%d\t\t\t%.12f\t\t\t",k + 2, tt);
+            double tt_original = tt;
+            tt = 0.0;
+            nb_iter = 0;
+            while (tt < 1.) {
+                Matrix A = randomMatrix(200, 200, primes[k]);
+                int* P = NULL;
+                int* Q = NULL;
+                int rank = 0;
+                clock_t start = clock();
+                pluq_inplace_avx2(&A, &P, &Q, &rank, primes[k]);
+                clock_t end = clock();
+                tt += ((double)(end - start)) / CLOCKS_PER_SEC;
+                
+                nb_iter += 1;
+            }
+
+            tt = tt / nb_iter;
+            printf("%.12f\t\t\t%.4f\n\n", tt, tt_original/tt);
         }
         return 0;
     }

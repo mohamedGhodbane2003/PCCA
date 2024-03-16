@@ -1,5 +1,8 @@
 CC=gcc
 CFLAGS=-Iinclude -O3 -mfma -mavx2
+FLINT_LIB_PATH=/usr/local/lib
+FLINT_FLAGS=-I$(FLINT_LIB_PATH)/include
+FLINT_LIBS=-L$(FLINT_LIB_PATH) -lflint -lgmp
 
 SRCDIR=src
 INCDIR=include
@@ -14,13 +17,13 @@ EXECUTABLE_BENCH=$(BINDIR)/bench
 all: $(EXECUTABLE_TEST) $(EXECUTABLE_BENCH)
 
 $(EXECUTABLE_TEST): $(OBJS)
-	$(CC) $(CFLAGS) $(filter-out bin/main_bench.o, $^) -o $@
+	$(CC) $(CFLAGS) $(FLINT_FLAGS)  $(filter-out bin/main_bench.o, $^) -o $@ $(FLINT_LIBS)
 
 $(EXECUTABLE_BENCH): $(OBJS)
-	$(CC) $(CFLAGS) $(filter-out bin/main.o, $^) -o $@
+	$(CC) $(CFLAGS) $(FLINT_FLAGS) $(filter-out bin/main.o, $^) -o $@ $(FLINT_LIBS)
 
 $(BINDIR)/%.o: $(SRCDIR)/%.c | $(BINDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(FLINT_FLAGS) -c $< -o $@ $(FLINT_LIBS)
 
 $(BINDIR):
 	mkdir -p $(BINDIR)

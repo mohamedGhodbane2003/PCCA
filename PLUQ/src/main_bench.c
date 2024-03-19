@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <time.h>
 #include "utilities.h"
-#include <flint/fq_mat.h>
-#include <flint/fq.h>
-#include <flint/fmpz.h>
+//#include <flint/fq_mat.h>
+//#include <flint/fq.h>
+//#include <flint/fmpz.h>
+#include <flint/nmod_mat.h>
 #include <flint/flint.h>
 
 
@@ -63,28 +64,50 @@ int main(int argc, char *argv[]) {
                     double tt = 0.0;
                     long nb_iter = 0;
                     while (tt < 1.) {
+                        // VERSION FQ_MAT
+                        //flint_rand_t state;
+                        //fmpz_t p;
+                        //fq_ctx_t ctx;
+                        //fq_mat_t mat;
+                        //slong rank;
+                        //slong P[n];
+                        //flint_randinit(state);
+                        //flint_randseed(state, time(NULL), time(NULL));
+                        //fmpz_init(p);
+                        //fmpz_set_si(p, primes[k]);
+                        //fq_ctx_init(ctx, p, 1, "x");
+                        //fq_mat_init(mat, n, n, ctx);
+                        //fq_mat_randtest(mat, state, ctx);
+                        //clock_t start = clock();
+                        //rank = fq_mat_lu(P , mat, rank, ctx);
+                        //clock_t end = clock();
+                        //tt += ((double)(end - start)) / CLOCKS_PER_SEC;
+
+                        //fq_mat_clear(mat, ctx);
+                        //fmpz_clear(p);
+                        //flint_randclear(state);
+                        //fq_ctx_clear(ctx);
+                        //nb_iter += 1;
+
+                        // VERSION NMOD_MAT
                         flint_rand_t state;
-                        fmpz_t p;
-                        fq_ctx_t ctx;
-                        fq_mat_t mat;
                         slong rank;
                         slong P[n];
                         flint_randinit(state);
                         flint_randseed(state, time(NULL), time(NULL));
-                        fmpz_init(p);
-                        fmpz_set_si(p, primes[k]);
-                        fq_ctx_init(ctx, p, 1, "x");
-                        fq_mat_init(mat, n, n, ctx);
-                        fq_mat_randtest(mat, state, ctx);
+                        nmod_mat_t mat;
+                        nmod_mat_init(mat, n, n, primes[k]);
+                        //nmod_mat_randtest(mat, state); --> the obtained matrix is too irregular
+                        for (ulong i = 0; i < n; i++)
+                            for (ulong j = 0; j < n; j++)
+                                nmod_mat_entry(mat, i, j) = n_randint(state, primes[k]);
                         clock_t start = clock();
-                        rank = fq_mat_lu(P , mat, rank, ctx);
+                        rank = nmod_mat_lu(P , mat, 0);  // 0 value for rank_check, otherwise there may be an early_exit
                         clock_t end = clock();
                         tt += ((double)(end - start)) / CLOCKS_PER_SEC;
 
-                        fq_mat_clear(mat, ctx);
-                        fmpz_clear(p);
+                        nmod_mat_clear(mat);
                         flint_randclear(state);
-                        fq_ctx_clear(ctx);
                         nb_iter += 1;
                     }
             tt = tt / nb_iter;

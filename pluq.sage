@@ -55,6 +55,39 @@ def PLUQ(A):
     return LU,P,Q,rank
 
 
+def PLUQ_Crout(A):
+    ## same as above, with Crout scheduling of updates
+    m,n = A.dimensions()
+    LU = copy(A)
+    Q = [i for i in range(n)]
+    P = [i for i in range(m)]
+    nullity = 0
+    rank = 0
+    while (rank + nullity < m):
+        # update row
+        LU[rank, rank:] = LU[rank, rank:] - LU[rank, :rank] * LU[:rank, rank:]
+        #find column with pivot element on row rank, if there is some
+        pivot = rank
+        while (pivot < n and LU[rank,pivot] == 0):
+            pivot += 1
+        if pivot == n:  # no pivot: put row in last position
+            #print(f"---rank{rank}--nullity---\n{LU}\n")
+            P = row_rotation(LU,rank,P)
+            #P = row_transposition(LU,rank,m-1-nullity,P)
+            #print(f"---rank{rank}--nullity---\n{LU}\n")
+            nullity += 1
+        else:  # found pivot
+            invpiv = LU[rank, pivot].inverse()
+            for i in range(rank+1,m-nullity):
+                LU[i,pivot] = LU[i,pivot] - (LU[i, :rank] * LU[:rank, pivot])[0,0]
+                LU[i,pivot] = LU[i,pivot] * invpiv
+            #print(f"---rank{rank}--rank---\n{LU}\n")
+            Q = column_rotation(LU,rank,pivot+1,Q)
+            #Q = column_transposition(LU,rank,pivot,Q)
+            #print(f"---rank{rank}--rank---\n{LU}\n")
+            rank += 1
+    return LU,P,Q,rank
+
 
 
 ###########
@@ -201,6 +234,71 @@ def check_many_PLUQ(field_prime=2,max_iter=1000):
     while correct and i < max_iter:
         A = Matrix.random(field,4,4)
         LU,P,Q,rank = PLUQ(A)
+        L,U = expand_PLUQ(LU,P,Q,rank)
+        correct = rank==A.rank()             \
+                      and check_triL(L)      \
+                      and check_triU(U,rank)
+        L.permute_rows(Permutation([i+1 for i in P]).inverse())
+        #L.permute_columns(Permutation([i+1 for i in P]).inverse())
+        #U.permute_rows(Permutation([i+1 for i in P]).inverse())
+        U.permute_columns(Permutation([i+1 for i in Q]).inverse())
+        correct = correct and L*U == A
+        i += 1
+    if correct:
+        print("square: ok")
+    else:
+        print("square: wrong")
+        return A
+
+    return True
+
+def check_many_PLUQ_Crout(field_prime=2,max_iter=1000):
+    field = GF(field_prime)
+    i = 0
+    correct = True
+    while correct and i < max_iter:
+        A = Matrix.random(field,6,3)
+        LU,P,Q,rank = PLUQ_Crout(A)
+        L,U = expand_PLUQ(LU,P,Q,rank)
+        correct = rank==A.rank()             \
+                      and check_triL(L)      \
+                      and check_triU(U,rank)
+        L.permute_rows(Permutation([i+1 for i in P]).inverse())
+        #L.permute_columns(Permutation([i+1 for i in P]).inverse())
+        #U.permute_rows(Permutation([i+1 for i in P]).inverse())
+        U.permute_columns(Permutation([i+1 for i in Q]).inverse())
+        correct = correct and L*U == A
+        i += 1
+    if correct:
+        print("tall rectangular: ok")
+    else:
+        print("tall rectangular: wrong")
+        return A
+
+    i = 0
+    while correct and i < max_iter:
+        A = Matrix.random(field,3,6)
+        LU,P,Q,rank = PLUQ_Crout(A)
+        L,U = expand_PLUQ(LU,P,Q,rank)
+        correct = rank==A.rank()             \
+                      and check_triL(L)      \
+                      and check_triU(U,rank)
+        L.permute_rows(Permutation([i+1 for i in P]).inverse())
+        #L.permute_columns(Permutation([i+1 for i in P]).inverse())
+        #U.permute_rows(Permutation([i+1 for i in P]).inverse())
+        U.permute_columns(Permutation([i+1 for i in Q]).inverse())
+        correct = correct and L*U == A
+        i += 1
+    if correct:
+        print("wide rectangular: ok")
+    else:
+        print("wide rectangular: wrong")
+        return A
+
+    i = 0
+    while correct and i < max_iter:
+        A = Matrix.random(field,4,4)
+        LU,P,Q,rank = PLUQ_Crout(A)
         L,U = expand_PLUQ(LU,P,Q,rank)
         correct = rank==A.rank()             \
                       and check_triL(L)      \

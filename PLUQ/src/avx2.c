@@ -1,7 +1,6 @@
 #include "avx2.h"
 
-inline __m128i sub_avx2(__m128i a, __m128i b, int p) {
-    __m128i vp = _mm_set1_epi32(p);
+inline __m128i sub_avx2(__m128i a, __m128i b, __m128i vp) {
     __m128i result = _mm_sub_epi32(a, b);
     __m128i mask = _mm_cmplt_epi32(result, _mm_setzero_si128());
     __m128i adjusted_result = _mm_add_epi32(result, vp);
@@ -44,7 +43,7 @@ int scalar_product_scalar(int* v, int* w, int len, int p) {
 }
 
 
-__m256d mul_mod_p(__m256d x, __m256d y, __m256d u, __m256d p) {
+inline __m256d mul_mod_p(__m256d x, __m256d y, __m256d u, __m256d p) {
     __m256d h = _mm256_mul_pd(x, y);
     __m256d l = _mm256_fmsub_pd(x, y, h);
     __m256d b = _mm256_mul_pd(h, u);
@@ -105,10 +104,8 @@ void print_m256d(__m256d vec) {
     printf("[%f, %f, %f, %f]\n", values[0], values[1], values[2], values[3]);
 }
 
-void rows_elimination_avx2(int *A_data,int n, int matrixRank, int c, int p, int k) {
+void rows_elimination_avx2(int *A_data,int n, int matrixRank, int c,int p , __m256d vp, __m256d vu ,__m128i vp_128, int k) {
     __m256d vc = _mm256_set1_pd(c);
-    __m256d vp = _mm256_set1_pd(p);
-    __m256d vu = _mm256_set1_pd(1.0 / p);
     __m256d tmp;
     int i;
     for (i = matrixRank + 1; i + 3 < n; i += 4) {
@@ -117,7 +114,7 @@ void rows_elimination_avx2(int *A_data,int n, int matrixRank, int c, int p, int 
         __m256d vDouble = _mm256_cvtepi32_pd(v1);
         tmp = mul_mod_p(vc, vDouble, vu, vp);
         __m128i resultInt = _mm256_cvttpd_epi32(tmp);
-        __m128i result = sub_avx2(v2, resultInt, p);
+        __m128i result = sub_avx2(v2, resultInt, vp_128);
         _mm_storeu_si128((__m128i *)&A_data[k * n + i], result);
     }
 

@@ -110,7 +110,6 @@ void checkOnePLUQ(int p, int m, int n, bool print){
     int rank = 0;
     PLUQ(A, &P, &LU, &Q, &rank, p);
     expand_PLUQ(LU, rank, &L, &U);
-
     if(print){
         printf("A:\n");
         printMatrix(A);

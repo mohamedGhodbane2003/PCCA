@@ -1,5 +1,52 @@
 #include "PLUQ.h"
 
+
+void crout_pluq(Matrix* A, int** P, int** Q, int *rank, int p) {
+    int m = A->rows;
+    int n = A->cols;
+    *P = createRange(m);
+    *Q = createRange(n);
+    int matrixRank = 0;
+    int k = 1;
+    for(int i = 0; i < m; i++) {
+        for(int l = 1; l < k; l++){
+            for(int j = k; j < n; j++) {
+                A->data[i * n + j] = sub(A->data[i * n + j], mult(A->data[i * n + l], A->data[l * n + j], p), p);
+            }
+        }
+        int flag = 1;
+        for(int j = k; j < n; j++) {
+            if(A->data[i * n + j] != 0){
+                flag = 0;
+                break;
+            }
+        }
+        if(flag == 1)
+            continue;
+        matrixRank++;
+        int s = 0;
+        for(int j = 0; j < n; j++){
+            if(A->data[i * n + j] != 0){
+                s = j;
+                break;
+            }
+        }
+        for(int j = i+1; j < m; j++) {
+            for(int l = 1; l < k; l++) {
+                A->data[j * n + s] = sub(A->data[j * n + s], mult(A->data[i * n + l], A->data[l * n + s], p), p);
+            }
+        }
+        int inv_Ais = inverse(A->data[i * n + s], p);
+        for(int j = i+1; j < m; j++) {
+            A->data[j * n + s] = mult(A->data[j * n + s], inv_Ais, p);
+        }
+        colTransposition(A, s, k, *Q);
+        rowTransposition(A, i, k, *P);
+        k++;
+    }
+    *rank = matrixRank;
+}
+
 void pluq_inplace_avx2(Matrix* A, int** P, int** Q, int* rank, int p) {
     int m = A->rows;
     int n = A->cols;
@@ -11,7 +58,7 @@ void pluq_inplace_avx2(Matrix* A, int** P, int** Q, int* rank, int p) {
     int nullity = 0;
 
     while (matrixRank + nullity < m) {
-        int pivot = matrixRank; // pivot is at column index >= matrixRank; take first one
+        int pivot = matrixRank;
         while (pivot < n && A->data[matrixRank * n + pivot] == 0)
             pivot += 1;
         if (pivot == n) {
@@ -21,9 +68,12 @@ void pluq_inplace_avx2(Matrix* A, int** P, int** Q, int* rank, int p) {
             int inv = inverse(A->data[matrixRank * n + matrixRank], p);
             if (pivot != matrixRank)
                 colTransposition(A, matrixRank, pivot, *Q);
+            __m256d vu = _mm256_set1_pd(1.0 / p);
+            __m256d vp = _mm256_set1_pd(p);
+            __m128i vp_128 = _mm_set1_epi32(p);
             for (int k = matrixRank + 1; k < m; k++) {
                 A->data[k * n + matrixRank] = mult(A->data[k * n + matrixRank], inv, p);
-                rows_elimination_avx2(A->data, n, matrixRank,A->data[k * n + matrixRank] ,p ,k);
+                rows_elimination_avx2(A->data, n, matrixRank,A->data[k * n + matrixRank], p ,vp ,vu, vp_128 ,k);
             }
             matrixRank++;
         }
@@ -42,7 +92,7 @@ void pluq_inplace(Matrix* A, int** P, int** Q, int* rank, int p) {
     int nullity = 0;
 
     while (matrixRank + nullity < m) {
-        int pivot = matrixRank; // pivot is at column index >= matrixRank; take first one
+        int pivot = matrixRank; 
         while (pivot < n && A->data[matrixRank * n + pivot] == 0)
             pivot += 1;
         if (pivot == n) {
@@ -67,16 +117,16 @@ void PLUQ(Matrix A, int** P, Matrix* LU, int** Q, int* rank, int p) {
     *LU = createMatrix(A.rows, A.cols);
     copyMatrix(A, LU);
     pluq_inplace_avx2(LU, P, Q, rank, p);
+    //crout_pluq(LU, P, Q, rank, p);
 }
 
 void expand_PLUQ(Matrix LU, int rank, Matrix* L, Matrix* U) {
     int m = LU.rows;
     int n = LU.cols;
 
-    *L = zerosMatrix(m, m); // L is square
-    *U = zerosMatrix(m, n); // U has the same dimensions as LU
+    *L = zerosMatrix(m, m); 
+    *U = zerosMatrix(m, n); 
 
-    // Retrieve L
     for (int j = 0; j < rank; j++) {
         for (int i = j + 1; i < m; i++) {
             L->data[i*m+j] = LU.data[i*n+j];
@@ -86,7 +136,6 @@ void expand_PLUQ(Matrix LU, int rank, Matrix* L, Matrix* U) {
         L->data[i*m+i] = 1;
     }
 
-    // Retrieve U
     for (int i = 0; i < rank; i++) {
         for (int j = 0; j < n; j++) {
             U->data[i*n+j] = LU.data[i*n+j];

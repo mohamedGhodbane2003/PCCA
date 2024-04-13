@@ -11,14 +11,13 @@ void pluq_crout(Matrix* A, int** P, int** Q, int* rank, int p) {
     int nullity = 0;
 
     while(matrixRank + nullity < m) {
-        for(int i = matrixRank; i < n; i++) {
-            int tmp = 0;
-            for(int j = 0; j < matrixRank; j++){
-                tmp = add(tmp, mult(A->data[matrixRank * n + j], A->data[j * n + i], p), p);
+        for (int j = matrixRank; j < n; j++) {
+                int sum = 0;
+                for (int k = 0; k < matrixRank; k++) {
+                    sum = add(sum, mult(A->data[matrixRank * n + k], A->data[k * n + j], p), p);
+                }
+                A->data[matrixRank * n + j] = sub(A->data[matrixRank * n + j], sum, p);
             }
-            A->data[matrixRank * n + i] = sub(A->data[matrixRank * n + i], tmp, p);
-        }
-
         int pivot = matrixRank;
         while(pivot < n && A->data[matrixRank, pivot] == 0)
             pivot++;
@@ -27,19 +26,18 @@ void pluq_crout(Matrix* A, int** P, int** Q, int* rank, int p) {
             rowRotation(A, matrixRank, *P);
             nullity++;
         }else{
-            int invpivot = inverse(A->data[matrixRank, pivot], p);
+            int invpivot = inverse(A->data[matrixRank * n + pivot], p);
             for(int i = matrixRank + 1; i < m - nullity; i++){
                 int tmp = 0;
-                 for(int j = 0; j < matrixRank; j++){
+                for(int j = 0; j < matrixRank; j++){
                     tmp = add(tmp, mult(A->data[i * n + j], A->data[j * n + pivot], p), p);
-                 }
-                 A->data[i * n + pivot] = sub(A->data[i * n + pivot], tmp, p);
-                 A->data[i * n + pivot] = mult(A->data[i * n + pivot], invpivot, p);
+                }
+                A->data[i * n + pivot] = sub(A->data[i * n + pivot], tmp, p);
+                A->data[i * n + pivot] = mult(A->data[i * n + pivot], invpivot, p);
             }
             colRotation(A, matrixRank, pivot+1, *Q);
             matrixRank++;
         }
-
     }
     *rank = matrixRank;
 }

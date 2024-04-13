@@ -10,6 +10,5 @@ void permuteMatrixCols(Matrix* A, int* perm);
 void rowTransposition(Matrix* A, int src, int tgt, int* R);
 void colTransposition(Matrix* A, int src, int tgt, int* C);
 void rowRotation(Matrix* A, int row, int* R);
-void colRotation(Matrix* A, int col, int* R);
-
+void colRotation(Matrix* A, int start_col, int end_col, int* R);
 #endif

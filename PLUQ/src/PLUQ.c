@@ -1,48 +1,45 @@
 #include "PLUQ.h"
 
-
-void crout_pluq(Matrix* A, int** P, int** Q, int *rank, int p) {
+void pluq_crout(Matrix* A, int** P, int** Q, int* rank, int p) {
     int m = A->rows;
     int n = A->cols;
+
     *P = createRange(m);
     *Q = createRange(n);
+
     int matrixRank = 0;
-    int k = 1;
-    for(int i = 0; i < m; i++) {
-        for(int l = 1; l < k; l++){
-            for(int j = k; j < n; j++) {
-                A->data[i * n + j] = sub(A->data[i * n + j], mult(A->data[i * n + l], A->data[l * n + j], p), p);
+    int nullity = 0;
+
+    while(matrixRank + nullity < m) {
+        for(int i = matrixRank; i < n; i++) {
+            int tmp = 0;
+            for(int j = 0; j < matrixRank; j++){
+                tmp = add(tmp, mult(A->data[matrixRank * n + j], A->data[j * n + i], p), p);
             }
+            A->data[matrixRank * n + i] = sub(A->data[matrixRank * n + i], tmp, p);
         }
-        int flag = 1;
-        for(int j = k; j < n; j++) {
-            if(A->data[i * n + j] != 0){
-                flag = 0;
-                break;
+
+        int pivot = matrixRank;
+        while(pivot < n && A->data[matrixRank, pivot] == 0)
+            pivot++;
+        
+        if(pivot == n) {
+            rowRotation(A, matrixRank, *P);
+            nullity++;
+        }else{
+            int invpivot = inverse(A->data[matrixRank, pivot], p);
+            for(int i = matrixRank + 1; i < m - nullity; i++){
+                int tmp = 0;
+                 for(int j = 0; j < matrixRank; j++){
+                    tmp = add(tmp, mult(A->data[i * n + j], A->data[j * n + pivot], p), p);
+                 }
+                 A->data[i * n + pivot] = sub(A->data[i * n + pivot], tmp, p);
+                 A->data[i * n + pivot] = mult(A->data[i * n + pivot], invpivot, p);
             }
+            colRotation(A, matrixRank, pivot+1, *Q);
+            matrixRank++;
         }
-        if(flag == 1)
-            continue;
-        matrixRank++;
-        int s = 0;
-        for(int j = 0; j < n; j++){
-            if(A->data[i * n + j] != 0){
-                s = j;
-                break;
-            }
-        }
-        for(int j = i+1; j < m; j++) {
-            for(int l = 1; l < k; l++) {
-                A->data[j * n + s] = sub(A->data[j * n + s], mult(A->data[i * n + l], A->data[l * n + s], p), p);
-            }
-        }
-        int inv_Ais = inverse(A->data[i * n + s], p);
-        for(int j = i+1; j < m; j++) {
-            A->data[j * n + s] = mult(A->data[j * n + s], inv_Ais, p);
-        }
-        colTransposition(A, s, k, *Q);
-        rowTransposition(A, i, k, *P);
-        k++;
+
     }
     *rank = matrixRank;
 }
@@ -116,8 +113,9 @@ void pluq_inplace(Matrix* A, int** P, int** Q, int* rank, int p) {
 void PLUQ(Matrix A, int** P, Matrix* LU, int** Q, int* rank, int p) {
     *LU = createMatrix(A.rows, A.cols);
     copyMatrix(A, LU);
-    pluq_inplace_avx2(LU, P, Q, rank, p);
-    //crout_pluq(LU, P, Q, rank, p);
+    //pluq_inplace(LU, P, Q, rank, p);
+    //pluq_inplace_avx2(LU, P, Q, rank, p);
+    pluq_crout(LU, P, Q, rank, p);
 }
 
 void expand_PLUQ(Matrix LU, int rank, Matrix* L, Matrix* U) {

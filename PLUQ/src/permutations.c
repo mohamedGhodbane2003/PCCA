@@ -81,27 +81,25 @@ void rowRotation(Matrix* A, int row, int* R) {
     free(tempRow);
 }
 
-void colRotation(Matrix* A, int col, int* R) {
+void colRotation(Matrix* A, int start_col, int end_col, int* R) {
     int cols = A->cols;
     int rows = A->rows;
     int* tempCol = (int*)malloc(rows * sizeof(int));
 
-    // Copy the column to be rotated to a temporary array
     for (int i = 0; i < rows; i++) {
-        tempCol[i] = A->data[i*cols+col];
+        tempCol[i] = A->data[i * cols + start_col];
     }
-    int temp = R[col];
-    // Shift the rows
-    for (int i = col; i < cols - 1; i++) {
-        for(int row = 0; row < rows; row++)
-            A->data[row*cols+i] = A->data[row*cols+(i+1)];
-        R[i] = R[i+1];
+    int temp = R[start_col];
+
+    for (int i = start_col; i < end_col-1; i++) {
+        for (int row = 0; row < rows; row++)
+            A->data[row * cols + i] = A->data[row * cols + (i + 1)];
+        R[i] = R[i + 1];
     }
 
-    // Copy the original row to the last row
-    for(int row = 0; row < rows; row++)
-        A->data[row*cols+(cols-1)] = tempCol[row];
-    R[cols-1] = temp;
+    for (int row = 0; row < rows; row++)
+        A->data[row * cols + (end_col-1)] = tempCol[row];
+    R[end_col-1] = temp;
 
     free(tempCol);
 }

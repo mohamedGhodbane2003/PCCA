@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     if (argc == 3 && (argv[1][0] == 'o' || argv[1][0] == 'f')) {
         int n = atoi(argv[2]);
         if(argv[1][0] == 'o'){
-            printf("BITS\t\t\tORIGINAL PLUQ\t\t\tVECTORIZED PLUQ\t\t\tSPEEDUP\n\n");
+            printf("BITS\t\t\t PLUQ CROUT\t\t\tVECTORIZED PLUQ\t\t\tSPEEDUP\n\n");
             for (long k = 0; k < 29; k++) {
                 double tt = 0.0;
                 long nb_iter = 0;
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
                     int* Q = NULL;
                     int rank = 0;
                     clock_t start = clock();
-                    pluq_inplace(&A, &P, &Q, &rank, primes[k]);
+                    pluq_crout(&A, &P, &Q, &rank, primes[k]);
                     clock_t end = clock();
                     tt += ((double)(end - start)) / CLOCKS_PER_SEC;
                     
@@ -48,7 +48,8 @@ int main(int argc, char *argv[]) {
                     int* Q = NULL;
                     int rank = 0;
                     clock_t start = clock();
-                    pluq_inplace_avx2(&A, &P, &Q, &rank, primes[k]);
+                    //pluq_inplace_avx2(&A, &P, &Q, &rank, primes[k]);
+                    pluq_crout_avx2(&A, &P, &Q, &rank, primes[k]);
                     clock_t end = clock();
                     tt += ((double)(end - start)) / CLOCKS_PER_SEC;
                     
@@ -121,7 +122,8 @@ int main(int argc, char *argv[]) {
                 int* Q = NULL;
                 int rank = 0;
                 clock_t start = clock();
-                pluq_inplace_avx2(&A, &P, &Q, &rank, primes[k]);
+                //pluq_inplace_avx2(&A, &P, &Q, &rank, primes[k]);
+                pluq_crout_avx2(&A, &P, &Q, &rank, primes[k]);
                 clock_t end = clock();
                 tt += ((double)(end - start)) / CLOCKS_PER_SEC;
                 
@@ -162,6 +164,7 @@ int main(int argc, char *argv[]) {
         
         clock_t start = clock();
         pluq_inplace_avx2(&A, &P, &Q, &rank, p);
+        //pluq_crout_avx2(&A, &P, &Q, &rank, p);
         clock_t end = clock();
         tt += ((double)(end - start)) / CLOCKS_PER_SEC;
 

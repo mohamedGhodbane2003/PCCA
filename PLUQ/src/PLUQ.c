@@ -1,5 +1,41 @@
 #include "PLUQ.h"
 
+void pluq_crout_avx2(Matrix* A, int** P, int** Q, int* rank, int p) {
+    int m = A->rows;
+    int n = A->cols;
+
+    *P = createRange(m);
+    *Q = createRange(n);
+
+    int matrixRank = 0;
+    int nullity = 0;
+    int *tmp1 = malloc((n - matrixRank) * sizeof(int));
+    int *tmp2 = malloc(((m - nullity) - (matrixRank + 1)) * sizeof(int));
+
+    while(matrixRank + nullity < m) {
+
+        vectorMatrixMultiplication_avx2(A->data, n, matrixRank, tmp1, p);
+        updateMatrix1_avx2(A->data, matrixRank, tmp1, n, p);
+
+        int pivot = matrixRank;
+        while(pivot < n && A->data[matrixRank, pivot] == 0)
+            pivot++; 
+        if(pivot == n) {
+            rowRotation(A, matrixRank, *P);
+            nullity++;
+        }else{
+            int invpivot = inverse(A->data[matrixRank * n + pivot], p);
+            for(int i = matrixRank + 1; i < m - nullity; i++){
+                tmp2[i - matrixRank - 1] = scalar_product2_avx2(A->data, matrixRank, n, i, pivot, p);
+            }
+            updateMatrix2_avx2(A->data, matrixRank, tmp2, n, m, nullity, pivot, invpivot, p);
+            colRotation(A, matrixRank, pivot+1, *Q);
+            matrixRank++;
+        }
+    }
+    *rank = matrixRank;
+}
+
 void pluq_crout(Matrix* A, int** P, int** Q, int* rank, int p) {
     int m = A->rows;
     int n = A->cols;
@@ -113,7 +149,8 @@ void PLUQ(Matrix A, int** P, Matrix* LU, int** Q, int* rank, int p) {
     copyMatrix(A, LU);
     //pluq_inplace(LU, P, Q, rank, p);
     //pluq_inplace_avx2(LU, P, Q, rank, p);
-    pluq_crout(LU, P, Q, rank, p);
+    //pluq_crout(LU, P, Q, rank, p);
+    pluq_crout_avx2(LU, P, Q, rank, p);
 }
 
 void expand_PLUQ(Matrix LU, int rank, Matrix* L, Matrix* U) {

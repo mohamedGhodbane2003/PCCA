@@ -31,9 +31,9 @@ int main(int argc, char *argv[]) {
             perror("Error opening file");
             return 1;
         }
-    for(int i = 1; i <= 5; i++ ){
+    for(int i = 4; i < 5; i++ ){
         fprintf(file, "Prime Bitlength\t\t\tSize\t\t\t");
-        switch(i){
+        switch(i+1){
             case 1: fprintf(file, "PLUQ\n\n"); printf("bench PLUQ...\n"); break;
             case 2: fprintf(file, "PLUQ AVX2\n\n"); printf("bench PLUQ AVX2...\n"); break;
             case 3: fprintf(file, "Crout\n\n"); printf("bench Crout...\n"); break;
@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
         }
         for(int j  = 0; j < 5; j++){
             for(int k = 0; k < 5; k++){
+                printf("%d, %d\n", j, k);
                double tt = 0.0;
             long nb_iter = 0;
             while (tt < 1.) {
@@ -55,15 +56,15 @@ int main(int argc, char *argv[]) {
                 nmod_mat_t mat;
                 nmod_mat_init(mat, sizes[j], sizes[j], primes[bitlengths[k - 2]]);
                 //nmod_mat_randtest(mat, state); --> the obtained matrix is too irregular
-                for (ulong i = 0; i < sizes[j]; i++)
-                    for (ulong j = 0; j < sizes[j]; j++)
-                        nmod_mat_entry(mat, i, j) = n_randint(state, primes[bitlengths[k - 2]]);
+                for (ulong l = 0; l < sizes[j]; l++)
+                    for (ulong m = 0; m < sizes[j]; m++)
+                        nmod_mat_entry(mat, l, m) = n_randint(state, primes[bitlengths[k - 2]]);
                 Matrix A = randomMatrix(sizes[j], sizes[j], primes[bitlengths[k - 2]]);
                 int* P = NULL;
                 int* Q = NULL;
                 int rank = 0;
                 clock_t start, end;
-                switch(i){
+                switch(i+1){
                     case 1: start = clock();
                             pluq_inplace(&A, &P, &Q, &rank, primes[bitlengths[k - 2]]);
                             end = clock(); break;

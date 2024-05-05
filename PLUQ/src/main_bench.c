@@ -43,9 +43,8 @@ int main(int argc, char *argv[]) {
         }
         for(int j  = 0; j < 5; j++){
             for(int k = 0; k < 5; k++){
-                printf("%d, %d\n", j, k);
                double tt = 0.0;
-            long nb_iter = 0;
+                long nb_iter = 0;
             while (tt < 1.) {
                 // VERSION NMOD_MAT
                 flint_rand_t state;

@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
             perror("Error opening file");
             return 1;
         }
-    for(int i = 4; i < 5; i++ ){
+    for(int i = 0; i < 5; i++ ){
         fprintf(file, "Prime Bitlength\t\t\tSize\t\t\t");
         switch(i+1){
             case 1: fprintf(file, "PLUQ\n\n"); printf("bench PLUQ...\n"); break;

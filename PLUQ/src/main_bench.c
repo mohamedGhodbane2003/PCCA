@@ -53,28 +53,28 @@ int main(int argc, char *argv[]) {
                 flint_randinit(state);
                 flint_randseed(state, time(NULL), time(NULL));
                 nmod_mat_t mat;
-                nmod_mat_init(mat, sizes[j], sizes[j], primes[bitlengths[k - 2]]);
+                nmod_mat_init(mat, sizes[j], sizes[j], primes[bitlengths[k] - 2]);
                 //nmod_mat_randtest(mat, state); --> the obtained matrix is too irregular
                 for (ulong l = 0; l < sizes[j]; l++)
                     for (ulong m = 0; m < sizes[j]; m++)
-                        nmod_mat_entry(mat, l, m) = n_randint(state, primes[bitlengths[k - 2]]);
-                Matrix A = randomMatrix(sizes[j], sizes[j], primes[bitlengths[k - 2]]);
+                        nmod_mat_entry(mat, l, m) = n_randint(state, primes[bitlengths[k] - 2]);
+                Matrix A = randomMatrix(sizes[j], sizes[j], primes[bitlengths[k] - 2]);
                 int* P = NULL;
                 int* Q = NULL;
                 int rank = 0;
                 clock_t start, end;
                 switch(i+1){
                     case 1: start = clock();
-                            pluq_inplace(&A, &P, &Q, &rank, primes[bitlengths[k - 2]]);
+                            pluq_inplace(&A, &P, &Q, &rank, primes[bitlengths[k] - 2]);
                             end = clock(); break;
                     case 2: start = clock();
-                            pluq_inplace_avx2(&A, &P, &Q, &rank, primes[bitlengths[k - 2]]);
+                            pluq_inplace_avx2(&A, &P, &Q, &rank, primes[bitlengths[k] - 2]);
                             end = clock(); break;
                     case 3: start = clock();
-                            pluq_crout(&A, &P, &Q, &rank, primes[bitlengths[k - 2]]);
+                            pluq_crout(&A, &P, &Q, &rank, primes[bitlengths[k] - 2]);
                             end = clock(); break;
                     case 4: start = clock();
-                            pluq_crout_avx2(&A, &P, &Q, &rank, primes[bitlengths[k - 2]]);
+                            pluq_crout_avx2(&A, &P, &Q, &rank, primes[bitlengths[k] - 2]);
                             end = clock(); break;
                     case 5: start = clock();
                             rankF = nmod_mat_lu(PF , mat, 0);  // 0 value for rank_check, otherwise there may be an early_exit

@@ -1,0 +1,83 @@
+for dim in 100 300 500 1000 1200; do for prime in 29 3079 6291469 201326611 402653189; do OMP_NUM_THREADS=1 ./benchmark-pluq -q $prime -m $dim -n $dim -r $dim -i 100 ; done ; done
+
+
+ModularBalanced<int32_t>  (storage in int32_t, does not accept more than ~15 bits)
+
+Time: 0.000275135 Gfops: 2.42305 -s N -q 29 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.000342131 Gfops: 1.94857 -s N -q 3079 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00369 Gfops: 4.87804 -s N -q 29 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00443292 Gfops: 4.06053 -s N -q 3079 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0120509 Gfops: 6.91513 -s N -q 29 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0150931 Gfops: 5.52129 -s N -q 3079 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0500641 Gfops: 13.3163 -s N -q 29 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0623238 Gfops: 10.6968 -s N -q 3079 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.072289 Gfops: 15.936 -s N -q 29 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0882812 Gfops: 13.0492 -s N -q 3079 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+
+ModularBalanced<int64_t>  (storage in int64_t)
+
+Time: 0.000711918 Gfops: 0.936438 -s N -q 29 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.000413895 Gfops: 1.61072 -s N -q 3079 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.000414133 Gfops: 1.60979 -s N -q 6291469 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.000226021 Gfops: 2.94958 -s N -q 201326611 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.000226974 Gfops: 2.93719 -s N -q 402653189 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00600481 Gfops: 2.9976 -s N -q 29 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00451803 Gfops: 3.98404 -s N -q 3079 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00450087 Gfops: 3.99923 -s N -q 6291469 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00235891 Gfops: 7.63063 -s N -q 201326611 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00233912 Gfops: 7.69519 -s N -q 402653189 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.021673 Gfops: 3.84504 -s N -q 29 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.016036 Gfops: 5.19663 -s N -q 3079 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0160329 Gfops: 5.19763 -s N -q 6291469 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00827098 Gfops: 10.0754 -s N -q 201326611 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00831509 Gfops: 10.0219 -s N -q 402653189 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0686612 Gfops: 9.70951 -s N -q 29 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0630219 Gfops: 10.5783 -s N -q 3079 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.06336 Gfops: 10.5219 -s N -q 6291469 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0355811 Gfops: 18.7365 -s N -q 201326611 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.037101 Gfops: 17.969 -s N -q 402653189 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0822301 Gfops: 14.0095 -s N -q 29 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0898659 Gfops: 12.8191 -s N -q 3079 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0891571 Gfops: 12.921 -s N -q 6291469 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0511289 Gfops: 22.5313 -s N -q 201326611 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0511291 Gfops: 22.5312 -s N -q 402653189 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+
+
+
+
+ModularBalanced<float>
+(storage in float's, does not accept more than ~12 bits, and we cannot directly compare to this because
+we would need some conversion int32_t -> float which is not free)
+
+Time: 7.82013e-05 Gfops: 8.52501 -s N -q 29 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.000236034 Gfops: 2.82445 -s N -q 3079 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00110006 Gfops: 16.3627 -s N -q 29 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00297523 Gfops: 6.04996 -s N -q 3079 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00333905 Gfops: 24.9572 -s N -q 29 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00946903 Gfops: 8.80062 -s N -q 3079 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.015492 Gfops: 43.0331 -s N -q 29 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0416601 Gfops: 16.0025 -s N -q 3079 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.023334 Gfops: 49.37 -s N -q 29 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0586982 Gfops: 19.6258 -s N -q 3079 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+
+
+
+ModularBalanced<double>
+(storage in double's, does not accept more than ~26 bits, and we cannot directly compare to this because
+we would need some conversion int32_t -> double which is not free)
+
+Time: 0.000276089 Gfops: 2.41468 -s N -q 29 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 7.29561e-05 Gfops: 9.13792 -s N -q 3079 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 7.51019e-05 Gfops: 8.87683 -s N -q 6291469 -m 100 -n 100 -r 100 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00254297 Gfops: 7.07833 -s N -q 29 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00124407 Gfops: 14.4687 -s N -q 3079 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00126004 Gfops: 14.2852 -s N -q 6291469 -m 300 -n 300 -r 300 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00889206 Gfops: 9.37166 -s N -q 29 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00391603 Gfops: 21.2801 -s N -q 3079 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.00391102 Gfops: 21.3073 -s N -q 6291469 -m 500 -n 500 -r 500 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0315669 Gfops: 21.1192 -s N -q 29 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0211182 Gfops: 31.5684 -s N -q 3079 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0212309 Gfops: 31.4007 -s N -q 6291469 -m 1000 -n 1000 -r 1000 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.04076 Gfops: 28.263 -s N -q 29 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.034816 Gfops: 33.0882 -s N -q 3079 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
+Time: 0.0347891 Gfops: 33.1138 -s N -q 6291469 -m 1200 -n 1200 -r 1200 -g Y -i 100 -v 0 -t 1 -b 1 -p N
